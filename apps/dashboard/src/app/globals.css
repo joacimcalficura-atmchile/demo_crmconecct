@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   Design System — ATM-Connect V1.0 (Light & Dark Mode)
+   ============================================================ */
+
+:root {
+  --cyan-primary: #0ea5e9;
+  --cyan-light: #38bdf8;
+  --text-dark: #0f172a; /* slate-900 */
+  --text-muted: #64748b; /* slate-500 */
+  --bg-base: #f8fafc; /* slate-50 */
+  
+  /* Glass Cards Light */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 4px 20px rgba(14, 165, 233, 0.05);
+
+  /* Apple Glass Light */
+  --glass-panel-bg: rgba(255, 255, 255, 0.75);
+  --glass-panel-border: rgba(0, 0, 0, 0.05);
+  --glass-panel-shadow: 0 8px 32px rgba(14, 165, 233, 0.05);
+  --glass-panel-hover-bg: rgba(255, 255, 255, 0.9);
+}
+
+.dark {
+  --text-dark: #f8fafc; /* slate-50 */
+  --text-muted: #94a3b8; /* slate-400 */
+  --bg-base: #020617; /* slate-950 */
+  
+  /* Glass Cards Dark */
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+  /* Apple Glass Dark */
+  --glass-panel-bg: rgba(15, 23, 42, 0.45);
+  --glass-panel-border: rgba(255, 255, 255, 0.05);
+  --glass-panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-panel-hover-bg: rgba(30, 41, 59, 0.5);
+}
+
+@layer base {
+  body, button, a, input, select {
+    touch-action: manipulation;
+  }
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-dark);
+    font-family: var(--font-inter), system-ui, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Glassmorphism cards */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transform: translateZ(0);
+}
+
+/* Dark Glassmorphism cards (Legacy for specific use cases) */
+.glass-card-dark {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  transform: translateZ(0);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.glass-card-hover {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(10px);
+  transform: translateZ(0);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-card-hover:hover {
+  border-color: var(--cyan-light);
+  box-shadow: 0 10px 30px rgba(14, 165, 233, 0.12);
+  transform: translateY(-2px) translateZ(0);
+}
+
+/* Premium Apple Glass Utilities (Responsive Light/Dark) */
+.glass-panel {
+  background: var(--glass-panel-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-panel-border);
+  box-shadow: var(--glass-panel-shadow);
+  border-radius: 1rem; /* 16px */
+  transform: translateZ(0);
+}
+
+.glass-panel-interactive {
+  background: var(--glass-panel-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-panel-border);
+  box-shadow: var(--glass-panel-shadow);
+  border-radius: 1rem;
+  transform: translateZ(0);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease;
+}
+.glass-panel-interactive:hover {
+  background: var(--glass-panel-hover-bg);
+  border-color: var(--cyan-light);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1), 0 0 20px rgba(14, 165, 233, 0.1);
+  transform: translateY(-2px);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem; /* 12px */
+  transition: all 0.2s ease;
+}
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.glass-button:active {
+  transform: scale(0.96);
+}
+
+.gradient-cobalt {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar personalizado */
+/* Oculta la barra de scroll (para tabs/filtros horizontales) — cross-browser */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(14, 165, 233, 0.3);
+  border-radius: 9999px;
+}
+
+/* Animación de pulso para indicadores live */
+@keyframes pulse-cyan {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pulse-live {
+  animation: pulse-cyan 2s ease-in-out infinite;
+}
+
+/* Chat abierto en móvil: el panel ocupa toda la pantalla, así que ocultamos el
+   dock inferior (CapsuleNav) para que no tape el input. Solo <768px (móvil);
+   en desktop el dock flotante sigue visible. La clase la pone/quita
+   ConversationsClient según haya una conversación seleccionada. */
+@media (max-width: 767px) {
+  body.chat-open [data-capsule-nav] {
+    display: none !important;
+  }
+
+  /* Chat abierto en móvil = pantalla completa real. Quitamos el pb-20 (reservado
+     para el dock, ahora oculto) que dejaba un espacio muerto abajo; el padding
+     del <main>; y el borde/redondeo del card, para que el chat quede edge-to-edge
+     y el input pegado al teclado sin huecos. */
+  body.chat-open [data-app-shell] { padding-bottom: 0 !important; }
+  body.chat-open [data-app-main] { padding: 0 !important; overflow: hidden !important; }
+  body.chat-open [data-chat-root] { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+}
