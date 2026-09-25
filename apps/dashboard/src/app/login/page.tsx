@@ -41,7 +41,7 @@ export default function LoginPage() {
     <div
       className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
       style={{
-        backgroundImage: `url(/fondoapp1.png?v=${Date.now()})`,
+        backgroundImage: 'url(/fondoapp1.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
