@@ -5,7 +5,7 @@ import { NextRequest } from 'next/server';
 export async function GET(req: NextRequest, ctx: any) {
   const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
   if (host) {
-    process.env.NEXTAUTH_URL = `https://${host}`;
+    Reflect.set(process.env, 'NEXTAUTH_URL', `https://${host}`);
   }
   return NextAuth(authOptions)(req, ctx);
 }
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, ctx: any) {
 export async function POST(req: NextRequest, ctx: any) {
   const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
   if (host) {
-    process.env.NEXTAUTH_URL = `https://${host}`;
+    Reflect.set(process.env, 'NEXTAUTH_URL', `https://${host}`);
   }
   return NextAuth(authOptions)(req, ctx);
 }

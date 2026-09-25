@@ -1,6 +1,34 @@
 import type { NextConfig } from "next";
 
+function resolveNextAuthUrl(): string {
+  const vercelHost = process.env.VERCEL_URL?.trim();
+  const candidates = [
+    process.env.NEXTAUTH_URL?.trim(),
+    vercelHost ? `https://${vercelHost.replace(/^https?:\/\//i, '')}` : undefined,
+    'http://localhost:3000',
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    try {
+      const url = new URL(candidate.includes('://') ? candidate : `https://${candidate}`);
+      if (url.protocol === 'http:' || url.protocol === 'https:') {
+        return url.toString().replace(/\/$/, '');
+      }
+    } catch {
+      // Ignore empty or malformed values and try the next safe fallback.
+    }
+  }
+
+  return 'http://localhost:3000';
+}
+
 const nextConfig: NextConfig = {
+  // NextAuth parses this during module initialization. An empty Vercel
+  // environment variable otherwise makes static prerendering throw Invalid URL.
+  env: {
+    NEXTAUTH_URL: resolveNextAuthUrl(),
+  },
   // ── Webpack: watchOptions para evitar rebuilds infinitos ──────────────
   webpack: (config, { dev }) => {
     const path = require('path');
