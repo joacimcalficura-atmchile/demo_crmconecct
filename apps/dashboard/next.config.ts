@@ -33,7 +33,11 @@ function pdfkitFontIncludes(): string[] {
     // el entry point ('js/pdfkit.js') y subir dos niveles hasta la raíz del paquete.
     const entry = require.resolve('pdfkit');
     const pdfkitDir = path.dirname(path.dirname(entry));
-    return [path.join(pdfkitDir, 'js/standard-fonts/**/*')];
+    // outputFileTracingIncludes espera rutas relativas al directorio de la app
+    // (donde vive este next.config.ts) — una ruta absoluta se concatena mal y
+    // Vercel arma un path corrupto (…/apps/dashboard/vercel/path0/…) al desplegar.
+    const relativeDir = path.relative(process.cwd(), pdfkitDir);
+    return [path.join(relativeDir, 'js/standard-fonts/**/*')];
   } catch {
     return [];
   }
