@@ -23,11 +23,30 @@ function resolveNextAuthUrl(): string {
   return 'http://localhost:3000';
 }
 
+// pdfkit (usado por @react-pdf/renderer) carga sus fuentes estándar con un
+// require dinámico que el file-tracer de Vercel no sigue — sin esto, la ruta
+// de PDF funciona en local pero tira MODULE_NOT_FOUND en producción.
+function pdfkitFontIncludes(): string[] {
+  const path = require('path');
+  try {
+    // pdfkit no expone './package.json' en su campo "exports" — hay que resolver
+    // el entry point ('js/pdfkit.js') y subir dos niveles hasta la raíz del paquete.
+    const entry = require.resolve('pdfkit');
+    const pdfkitDir = path.dirname(path.dirname(entry));
+    return [path.join(pdfkitDir, 'js/standard-fonts/**/*')];
+  } catch {
+    return [];
+  }
+}
+
 const nextConfig: NextConfig = {
   // NextAuth parses this during module initialization. An empty Vercel
   // environment variable otherwise makes static prerendering throw Invalid URL.
   env: {
     NEXTAUTH_URL: resolveNextAuthUrl(),
+  },
+  outputFileTracingIncludes: {
+    '/api/quotes/[id]/document.pdf': pdfkitFontIncludes(),
   },
   // ── Webpack: watchOptions para evitar rebuilds infinitos ──────────────
   webpack: (config, { dev }) => {
