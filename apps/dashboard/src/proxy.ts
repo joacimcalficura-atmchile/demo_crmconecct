@@ -18,6 +18,11 @@ export default async function proxy(request: NextRequest, event: NextFetchEvent)
     if (pathname.startsWith('/api/auth/') && !pathname.startsWith('/api/auth/google')) {
       return NextResponse.next();
     }
+    // El PDF de una cotización lo abre el cliente final por WhatsApp, sin sesión
+    // de dashboard — igual que en producción.
+    if (/^\/api\/quotes\/[^/]+\/document\.pdf$/.test(pathname)) {
+      return NextResponse.next();
+    }
     if (!(await requireSession(request))) {
       return NextResponse.json({ error: 'No autorizado', demo: true }, { status: 401 });
     }

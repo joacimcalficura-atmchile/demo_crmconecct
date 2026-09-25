@@ -679,7 +679,8 @@ function ConversationPanel({
   onToggleSupplier,
   onSaveQualification,
   duplicateNames,
-  companyConfig
+  companyConfig,
+  onOptimisticSend,
 }: {
   conv: Conversation;
   messages: Message[];
@@ -694,6 +695,9 @@ function ConversationPanel({
   onSaveQualification: (newQual: string) => Promise<void>;
   duplicateNames: Set<string>;
   companyConfig?: any;
+  /** Refleja localmente un mensaje recién enviado a mano, sin esperar el próximo
+      poll — en la demo no hay backend real que lo devuelva en el siguiente fetch. */
+  onOptimisticSend?: (message: Message) => void;
 }) {
   const isPaused = conv.status === 'paused' || conv.status === 'human';
   const displayName = getDisplayName(conv, duplicateNames);
@@ -987,6 +991,18 @@ function ConversationPanel({
         });
         if (!res.ok) throw new Error('fail');
         sent++;
+        // La demo no tiene backend real que devuelva este mensaje en el próximo
+        // poll — se refleja localmente para que escribir se sienta interactivo.
+        if (job.message) {
+          onOptimisticSend?.({
+            id: `local-${Date.now()}-${i}`,
+            conversation_id: conv.id,
+            role: 'assistant',
+            content: job.message,
+            intent: null,
+            created_at: new Date().toISOString(),
+          });
+        }
       } catch (e) {
         console.error(e);
         failedLabels.push(job.att ? job.att.name : 'mensaje de texto');
@@ -1937,8 +1953,13 @@ export default function ConversationsPageClient({ initialConversations }: { init
           if (cancelled) return;
           const cleanData = deduplicateMessages(rawData);
           setMessages(prev => {
-            if (JSON.stringify(prev) === JSON.stringify(cleanData)) return prev;
-            return cleanData;
+            // La demo sirve una lista fija: sin esto, cada poll borraría los
+            // mensajes escritos a mano (onOptimisticSend) que el "backend" nunca
+            // va a devolver.
+            const localOnly = prev.filter(m => m.id.startsWith('local-'));
+            const merged = localOnly.length > 0 ? [...cleanData, ...localOnly] : cleanData;
+            if (JSON.stringify(prev) === JSON.stringify(merged)) return prev;
+            return merged;
           });
         }
       } catch { /* offline o abortado al cambiar de chat */ }
@@ -2373,6 +2394,7 @@ export default function ConversationsPageClient({ initialConversations }: { init
               onSaveQualification={handleSaveQualification}
               duplicateNames={duplicateNames}
               companyConfig={companyConfig}
+              onOptimisticSend={(m) => setMessages(prev => [...prev, m])}
             />
             </motion.div>
           ) : (

@@ -1,6 +1,10 @@
 /** Datos enteramente ficticios para la demo de Aceros Temuco. */
 const today = '2026-09-24T12:00:00-03:00';
 
+const siteUrl = 'https://democrm.atmchile.com';
+const pdfUrl = (quoteId: string) => `${siteUrl}/api/quotes/${quoteId}/document.pdf`;
+const payUrl = (quoteId: string) => `${siteUrl}/pago/${quoteId}`;
+
 // qualification usada por ConversationsClient: unqualified | lead | cold | warm | hot
 function qualificationFor(score: number): 'hot' | 'warm' | 'cold' | 'unqualified' {
   if (score >= 80) return 'hot';
@@ -56,10 +60,10 @@ export const demoConversations = [
     messageCount: 4, updated_at: '2026-09-24T10:18:00-03:00',
   }),
   conversation({
-    id: 'demo-lead-003', phone: '56900000003', status: 'active', last_intent: 'QUALIFY_LEAD', confidence: 0.77, score: 64,
-    name: 'Camila Demo', summary: 'Cilindrado A36 ~8 mm · falta confirmar diámetro exacto.',
+    id: 'demo-lead-003', phone: '56900000003', status: 'active', last_intent: 'REQUEST_QUOTE', confidence: 0.85, score: 64,
+    name: 'Camila Demo', summary: 'Cilindrado A36 · 200 mm diámetro, 8 mm espesor · confirmado por nota de voz.',
     profile: 'Taller Cordillera Demo · maestranza pequeña · registro ficticio.',
-    messageCount: 4, updated_at: '2026-09-24T11:35:00-03:00',
+    messageCount: 6, updated_at: '2026-09-24T13:12:00-03:00',
   }),
   conversation({
     id: 'demo-lead-004', phone: '56900000004', status: 'active', last_intent: 'QUALIFY_LEAD', confidence: 0.7, score: 48,
@@ -103,7 +107,8 @@ export const demoMessages = [
   msg('demo-msg-002', 'demo-lead-001', 'assistant', '¡Hola, Paula! Para preparar una cotización referencial necesito las medidas de cada pieza y confirmar si el material lo aporta su empresa.', 'QUALIFY_LEAD', '2026-09-24T09:12:00-03:00'),
   msg('demo-msg-003', 'demo-lead-001', 'user', 'Cada pieza mide 400 por 250 milímetros. Nosotros llevamos la plancha.', 'GENERAL_CHAT', '2026-09-24T09:15:00-03:00'),
   msg('demo-msg-004', 'demo-lead-001', 'assistant', 'Gracias. Dejé la solicitud lista para revisión del equipo comercial. El valor final se confirma al validar material, medidas y disponibilidad.', 'REQUEST_QUOTE', '2026-09-24T09:16:00-03:00'),
-  msg('demo-msg-005', 'demo-lead-001', 'assistant', 'Tu cotización ya fue revisada y aprobada por el equipo: 8 piezas de oxicorte A36 (7–12 mm), total $176.120 IVA incluido. Te la compartimos en el documento formal adjunto.', 'REQUEST_QUOTE', '2026-09-24T09:30:00-03:00'),
+  msg('demo-msg-005', 'demo-lead-001', 'assistant', 'Tu cotización ya fue revisada y aprobada por el equipo: 8 piezas de oxicorte A36 (7–12 mm), total $176.120 IVA incluido.', 'REQUEST_QUOTE', '2026-09-24T09:30:00-03:00'),
+  msg('demo-msg-045', 'demo-lead-001', 'assistant', `Aquí tienes el documento formal en PDF: ${pdfUrl('DEMO-2401')}`, 'REQUEST_QUOTE', '2026-09-24T09:31:00-03:00'),
   msg('demo-msg-006', 'demo-lead-001', 'user', 'Genial, gracias. Lo revisamos internamente y les confirmamos.', 'GENERAL_CHAT', '2026-09-24T09:32:00-03:00'),
 
   // Matías — plegado, cotización en borrador (para demo en vivo de "Aprobar y Enviar")
@@ -117,6 +122,8 @@ export const demoMessages = [
   msg('demo-msg-012', 'demo-lead-003', 'assistant', 'De acuerdo. El valor de cilindrado depende del diámetro y el espesor de la plancha — apenas los tengas, preparamos una cotización referencial para revisión.', 'QUALIFY_LEAD', '2026-09-24T11:22:00-03:00'),
   msg('demo-msg-013', 'demo-lead-003', 'user', 'Es acero A36, calculo unos 8 mm de espesor, pero el diámetro lo confirmo con el jefe de taller.', 'GENERAL_CHAT', '2026-09-24T11:33:00-03:00'),
   msg('demo-msg-014', 'demo-lead-003', 'assistant', 'Perfecto, con 8 mm entra en nuestro rango de 6–10 mm. Cuando tengas el diámetro exacto avísame para dejar la solicitud lista para el equipo comercial.', 'QUALIFY_LEAD', '2026-09-24T11:35:00-03:00'),
+  msg('demo-msg-050', 'demo-lead-003', 'user', `[audio adjunto: ${siteUrl}/demo-media/nota-voz-camila.ogg]`, 'GENERAL_CHAT', '2026-09-24T13:10:00-03:00'),
+  msg('demo-msg-051', 'demo-lead-003', 'assistant', 'Perfecto, con 200 mm de diámetro y 8 mm de espesor ya tenemos todo lo necesario. Dejé la solicitud lista para que el equipo prepare la cotización.', 'REQUEST_QUOTE', '2026-09-24T13:12:00-03:00'),
 
   // Diego — corte plasma CNC, primer contacto
   msg('demo-msg-015', 'demo-lead-004', 'user', '¿Pueden cortar una forma especial en plasma CNC?', 'GENERAL_CHAT', '2026-09-24T14:40:00-03:00'),
@@ -129,9 +136,10 @@ export const demoMessages = [
   msg('demo-msg-020', 'demo-lead-005', 'assistant', '¡Hola, Valentina! Para dimensionar el proyecto necesito el largo, ancho y altura aproximada de la ampliación, y si ya tienen un plano o boceto.', 'QUALIFY_LEAD', '2026-09-20T08:32:00-03:00'),
   msg('demo-msg-021', 'demo-lead-005', 'user', 'Es una ampliación mediana, unos 8x6 metros, altura 4 metros. Tenemos un boceto que les puedo enviar.', 'GENERAL_CHAT', '2026-09-20T08:40:00-03:00'),
   msg('demo-msg-022', 'demo-lead-005', 'assistant', 'Perfecto, con esos datos dejé la solicitud lista para que el equipo prepare una cotización referencial de estructura mediana.', 'REQUEST_QUOTE', '2026-09-20T08:42:00-03:00'),
-  msg('demo-msg-023', 'demo-lead-005', 'assistant', 'Tu cotización fue aprobada por el equipo: estructura metálica mediana, total $499.800 IVA incluido. Te la enviamos en el documento formal adjunto.', 'REQUEST_QUOTE', '2026-09-20T09:15:00-03:00'),
+  msg('demo-msg-023', 'demo-lead-005', 'assistant', 'Tu cotización fue aprobada por el equipo: estructura metálica mediana, total $499.800 IVA incluido.', 'REQUEST_QUOTE', '2026-09-20T09:15:00-03:00'),
+  msg('demo-msg-046', 'demo-lead-005', 'assistant', `Aquí tienes el documento formal en PDF: ${pdfUrl('DEMO-2403')}`, 'REQUEST_QUOTE', '2026-09-20T09:16:00-03:00'),
   msg('demo-msg-024', 'demo-lead-005', 'user', 'Se ve bien, aceptamos. ¿Cómo seguimos con el pago?', 'GENERAL_CHAT', '2026-09-20T09:20:00-03:00'),
-  msg('demo-msg-025', 'demo-lead-005', 'assistant', '¡Excelente! Para reservar el cupo de producción puedes abonar el anticipo aquí: pagos.acerostemuco-demo.cl/link-simulado-001 (link de ejemplo, no procesa pagos reales en esta demo).', 'REQUEST_QUOTE', '2026-09-20T09:22:00-03:00'),
+  msg('demo-msg-025', 'demo-lead-005', 'assistant', `¡Excelente! Para reservar el cupo de producción puedes abonar el anticipo aquí: ${payUrl('DEMO-2403')} (página de demostración, no procesa pagos reales).`, 'REQUEST_QUOTE', '2026-09-20T09:22:00-03:00'),
   msg('demo-msg-026', 'demo-lead-005', 'user', 'Listo, ya transferí el anticipo. Les adjunto el comprobante.', 'GENERAL_CHAT', '2026-09-20T09:45:00-03:00'),
   msg('demo-msg-027', 'demo-lead-005', 'assistant', '¡Recibido! Registramos tu comprobante y quedó validado por el equipo financiero. Tu proyecto de estructura metálica queda confirmado en producción. 🎉', 'FINANCE_QUERY', '2026-09-20T09:50:00-03:00'),
 
@@ -141,6 +149,7 @@ export const demoMessages = [
   msg('demo-msg-030', 'demo-lead-007', 'user', 'Es un galpón de 20x15 metros, y unos 8 refuerzos plegados en plancha de 8 mm.', 'GENERAL_CHAT', '2026-09-23T09:10:00-03:00'),
   msg('demo-msg-031', 'demo-lead-007', 'assistant', 'Gracias, dejé la solicitud lista para que el equipo prepare la cotización de este proyecto industrial.', 'REQUEST_QUOTE', '2026-09-23T09:12:00-03:00'),
   msg('demo-msg-032', 'demo-lead-007', 'assistant', 'Tu cotización fue aprobada y enviada: estructura industrial + 8 refuerzos plegados, total $1.363.740 IVA incluido. Quedamos atentos a tu confirmación.', 'REQUEST_QUOTE', '2026-09-23T09:40:00-03:00'),
+  msg('demo-msg-047', 'demo-lead-007', 'assistant', `Aquí tienes el documento formal en PDF: ${pdfUrl('DEMO-2405')}`, 'REQUEST_QUOTE', '2026-09-23T09:41:00-03:00'),
   msg('demo-msg-033', 'demo-lead-007', 'assistant', 'Para afinar detalles técnicos, ¿te acomoda una visita a terreno? Tenemos disponibilidad la próxima semana.', 'SCHEDULE_MEETING', '2026-09-23T09:42:00-03:00'),
   msg('demo-msg-034', 'demo-lead-007', 'user', 'Sí, coordinemos la visita para revisar el terreno antes de confirmar.', 'GENERAL_CHAT', '2026-09-23T09:45:00-03:00'),
 
@@ -150,7 +159,8 @@ export const demoMessages = [
   msg('demo-msg-037', 'demo-lead-008', 'user', 'Lo necesito con urgencia, en 3 días máximo.', 'GENERAL_CHAT', '2026-09-18T10:05:00-03:00'),
   msg('demo-msg-038', 'demo-lead-008', 'assistant', 'Entendido, dejé la solicitud lista para revisión. El equipo evaluará si el plazo de 3 días es posible con la carga de trabajo actual.', 'REQUEST_QUOTE', '2026-09-18T10:07:00-03:00'),
   msg('demo-msg-039', 'demo-lead-008', 'assistant', 'Tu cotización fue aprobada y enviada: cilindrado de eje de 10 mm, total $207.060 IVA incluido. El plazo estimado de entrega es de 6 días hábiles.', 'REQUEST_QUOTE', '2026-09-18T10:30:00-03:00'),
-  msg('demo-msg-040', 'demo-lead-008', 'user', '6 días no nos sirve, necesitamos el eje en 3 días máximo. Vamos a cotizar con otro proveedor, gracias de todas formas.', 'GENERAL_CHAT', '2026-09-18T10:20:00-03:00'),
+  msg('demo-msg-048', 'demo-lead-008', 'assistant', `Aquí tienes el documento formal en PDF: ${pdfUrl('DEMO-2404')}`, 'REQUEST_QUOTE', '2026-09-18T10:31:00-03:00'),
+  msg('demo-msg-040', 'demo-lead-008', 'user', '6 días no nos sirve, necesitamos el eje en 3 días máximo. Vamos a cotizar con otro proveedor, gracias de todas formas.', 'GENERAL_CHAT', '2026-09-18T10:35:00-03:00'),
 
   // Proveedor — consulta financiera derivada a un humano (HITL)
   msg('demo-msg-041', 'demo-conv-supplier-001', 'user', 'Hola, quería confirmar cuándo se paga la factura de los consumibles de corte que enviamos.', 'GENERAL_CHAT', '2026-09-20T16:00:00-03:00'),
@@ -160,11 +170,11 @@ export const demoMessages = [
 ];
 
 export const demoQuotes = [
-  { id: 'DEMO-2401', phone: '56900000001', contact_name: 'Paula Ejemplo', contact_company: 'Obras Araucanía Demo', contact_email: 'paula@example.com', subject: 'Oxicorte A36 · 8 piezas · 7-12 mm', items_json: JSON.stringify([{ description: 'Servicio de oxicorte · plancha A36 · espesor 7-12 mm · 8 piezas', quantity: 8, unit_price: 18500 }]), subtotal: 148000, tax: 28120, total: 176120, status: 'sent', pdf_url: null, created_at: '2026-09-24T09:16:00-03:00' },
+  { id: 'DEMO-2401', phone: '56900000001', contact_name: 'Paula Ejemplo', contact_company: 'Obras Araucanía Demo', contact_email: 'paula@example.com', subject: 'Oxicorte A36 · 8 piezas · 7-12 mm', items_json: JSON.stringify([{ description: 'Servicio de oxicorte · plancha A36 · espesor 7-12 mm · 8 piezas', quantity: 8, unit_price: 18500 }]), subtotal: 148000, tax: 28120, total: 176120, status: 'sent', pdf_url: pdfUrl('DEMO-2401'), created_at: '2026-09-24T09:16:00-03:00' },
   { id: 'DEMO-2402', phone: '56900000002', contact_name: 'Matías Prueba', contact_company: 'Montajes del Sur Ficticio', contact_email: 'matias@example.com', subject: 'Plegado de plancha · 3 mm', items_json: JSON.stringify([{ description: 'Plegado de plancha de acero · 1-3 mm · 6 dobleces a 90°', quantity: 6, unit_price: 11250 }]), subtotal: 67500, tax: 12825, total: 80325, status: 'draft', pdf_url: null, created_at: '2026-09-24T10:18:00-03:00' },
-  { id: 'DEMO-2403', phone: '56900000005', contact_name: 'Valentina Ficticia', contact_company: 'Maestranza del Valle Demo', contact_email: 'valentina@example.com', subject: 'Fabricación de estructura metálica · ampliación mediana', items_json: JSON.stringify([{ description: 'Fabricación de estructura metálica mediana (8x6x4 m)', quantity: 1, unit_price: 420000 }]), subtotal: 420000, tax: 79800, total: 499800, status: 'accepted', pdf_url: null, created_at: '2026-09-20T08:42:00-03:00' },
-  { id: 'DEMO-2404', phone: '56900000008', contact_name: 'Sergio Lagos', contact_company: 'Talleres Ñielol Demo', contact_email: 'sergio@example.com', subject: 'Cilindrado de eje · 10 mm', items_json: JSON.stringify([{ description: 'Cilindrado · eje 10 mm · 3 horas de máquina estimadas', quantity: 3, unit_price: 58000 }]), subtotal: 174000, tax: 33060, total: 207060, status: 'rejected', pdf_url: null, created_at: '2026-09-18T10:07:00-03:00' },
-  { id: 'DEMO-2405', phone: '56900000007', contact_name: 'Francisca Ríos', contact_company: 'Estructuras Bío Bío Demo', contact_email: 'francisca@example.com', subject: 'Estructura industrial + refuerzos plegados', items_json: JSON.stringify([{ description: 'Fabricación de estructura industrial (galpón 20x15 m)', quantity: 1, unit_price: 950000 }, { description: 'Plegado de refuerzos · 7-10 mm · 8 dobleces', quantity: 8, unit_price: 24500 }]), subtotal: 1146000, tax: 217740, total: 1363740, status: 'sent', pdf_url: null, created_at: '2026-09-23T09:12:00-03:00' },
+  { id: 'DEMO-2403', phone: '56900000005', contact_name: 'Valentina Ficticia', contact_company: 'Maestranza del Valle Demo', contact_email: 'valentina@example.com', subject: 'Fabricación de estructura metálica · ampliación mediana', items_json: JSON.stringify([{ description: 'Fabricación de estructura metálica mediana (8x6x4 m)', quantity: 1, unit_price: 420000 }]), subtotal: 420000, tax: 79800, total: 499800, status: 'accepted', pdf_url: pdfUrl('DEMO-2403'), created_at: '2026-09-20T08:42:00-03:00' },
+  { id: 'DEMO-2404', phone: '56900000008', contact_name: 'Sergio Lagos', contact_company: 'Talleres Ñielol Demo', contact_email: 'sergio@example.com', subject: 'Cilindrado de eje · 10 mm', items_json: JSON.stringify([{ description: 'Cilindrado · eje 10 mm · 3 horas de máquina estimadas', quantity: 3, unit_price: 58000 }]), subtotal: 174000, tax: 33060, total: 207060, status: 'rejected', pdf_url: pdfUrl('DEMO-2404'), created_at: '2026-09-18T10:07:00-03:00' },
+  { id: 'DEMO-2405', phone: '56900000007', contact_name: 'Francisca Ríos', contact_company: 'Estructuras Bío Bío Demo', contact_email: 'francisca@example.com', subject: 'Estructura industrial + refuerzos plegados', items_json: JSON.stringify([{ description: 'Fabricación de estructura industrial (galpón 20x15 m)', quantity: 1, unit_price: 950000 }, { description: 'Plegado de refuerzos · 7-10 mm · 8 dobleces', quantity: 8, unit_price: 24500 }]), subtotal: 1146000, tax: 217740, total: 1363740, status: 'sent', pdf_url: pdfUrl('DEMO-2405'), created_at: '2026-09-23T09:12:00-03:00' },
 ];
 
 export const demoCampaigns = [
